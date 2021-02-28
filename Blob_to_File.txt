@@ -1,0 +1,26 @@
+import sqlite3
+#from hdbcli import dbapi(for Hana)
+conn = sqlite3.connect("mydatabase.db")
+"""
+conn = dbapi.connect(
+    address="<hostname>", 
+    port=3<NN>MM, 
+    user="<username>", 
+    password="<password>"
+)
+"""
+cursor = conn.cursor()
+
+sql = "SELECT * FROM blobcheck"
+print ("listing of all the records in the table:")
+l=[]
+cursor.execute(sql)
+rows=cursor.fetchall() 
+names = [desc[0] for desc in cursor.description] 
+df = pd.DataFrame([tuple(t) for t in rows]) 
+print(df)
+conn.close()
+length=df.shape[0]
+for i in range(length):
+    with open(df[1][i], "wb") as fh:
+        fh.write(df[2][i])
